@@ -24,7 +24,7 @@ import {
   Sparkles
 } from 'lucide-react';
 
-// Initial Mock Data
+// Initial Categories with ZERO transactions (সম্পূর্ণ খালি ডাটা)
 const INITIAL_CATEGORIES = [
   {
     id: 'box',
@@ -35,10 +35,7 @@ const INITIAL_CATEGORIES = [
     lightBg: 'bg-emerald-50 dark:bg-emerald-950/30',
     borderColor: 'border-emerald-200 dark:border-emerald-800',
     textColor: 'text-emerald-700 dark:text-emerald-400',
-    transactions: [
-      { id: 't1', date: new Date().toISOString().split('T')[0], description: 'Emergency Cash Deposit', amount: 5000, type: 'IN' },
-      { id: 't2', date: new Date().toISOString().split('T')[0], description: 'Grocery Expenses', amount: 1200, type: 'OUT' }
-    ]
+    transactions: [] // জিরো এন্ট্রি
   },
   {
     id: 'ucb',
@@ -49,10 +46,7 @@ const INITIAL_CATEGORIES = [
     lightBg: 'bg-blue-50 dark:bg-blue-950/30',
     borderColor: 'border-blue-200 dark:border-blue-800',
     textColor: 'text-blue-700 dark:text-blue-400',
-    transactions: [
-      { id: 't3', date: new Date().toISOString().split('T')[0], description: 'Monthly Salary Credit', amount: 45000, type: 'IN' },
-      { id: 't4', date: new Date().toISOString().split('T')[0], description: 'ATM Cash Withdrawal', amount: 5000, type: 'OUT' }
-    ]
+    transactions: [] // জিরো এন্ট্রি
   },
   {
     id: 'brac',
@@ -63,10 +57,7 @@ const INITIAL_CATEGORIES = [
     lightBg: 'bg-purple-50 dark:bg-purple-950/30',
     borderColor: 'border-purple-200 dark:border-purple-800',
     textColor: 'text-purple-700 dark:text-purple-400',
-    transactions: [
-      { id: 't5', date: new Date().toISOString().split('T')[0], description: 'Freelance Project Payment', amount: 18500, type: 'IN' },
-      { id: 't6', date: new Date().toISOString().split('T')[0], description: 'Utility Bill Payment', amount: 3200, type: 'OUT' }
-    ]
+    transactions: [] // জিরো এন্ট্রি
   },
   {
     id: 'manus_theke_pai',
@@ -82,27 +73,13 @@ const INITIAL_CATEGORIES = [
         id: 'p1',
         name: 'Rahim Ahmed',
         phone: '01700000000',
-        transactions: [
-          { id: 't7', date: new Date().toISOString().split('T')[0], description: 'Lent for phone purchase', amount: 10000, type: 'IN' },
-          { id: 't8', date: new Date().toISOString().split('T')[0], description: 'Partial repayment received', amount: 3000, type: 'OUT' }
-        ]
+        transactions: [] // জিরো এন্ট্রি
       },
       {
         id: 'p2',
         name: 'Karim Chowdhury',
         phone: '01800000000',
-        transactions: [
-          { id: 't9', date: new Date().toISOString().split('T')[0], description: 'Borrowed for rent', amount: 7500, type: 'IN' }
-        ]
-      },
-      {
-        id: 'p3',
-        name: 'Sakib Hassan',
-        phone: '01900000000',
-        transactions: [
-          { id: 't10', date: new Date().toISOString().split('T')[0], description: 'Lunch bill share', amount: 1500, type: 'IN' },
-          { id: 't11', date: new Date().toISOString().split('T')[0], description: 'Paid back cash', amount: 1500, type: 'OUT' }
-        ]
+        transactions: [] // জিরো এন্ট্রি
       }
     ]
   }
@@ -262,7 +239,7 @@ export default function App() {
       if (cat.type === 'direct') {
         return {
           ...cat,
-          transactions: [transactionItem, ...cat.transactions]
+          transactions: [transactionItem, ...(cat.transactions || [])]
         };
       } else if (cat.type === 'nested' && selectedPersonId) {
         return {
@@ -271,7 +248,7 @@ export default function App() {
             if (person.id !== selectedPersonId) return person;
             return {
               ...person,
-              transactions: [transactionItem, ...person.transactions]
+              transactions: [transactionItem, ...(person.transactions || [])]
             };
           })
         };
@@ -395,7 +372,7 @@ export default function App() {
 
   // Reset All App Data
   const handleResetData = () => {
-    if (window.confirm('Reset all transaction data to initial defaults?')) {
+    if (window.confirm('Reset all transaction data to initial defaults (Zero Balance)?')) {
       setCategories(INITIAL_CATEGORIES);
       setActiveTab('box');
       localStorage.removeItem('tracker_categories_data');
@@ -575,7 +552,7 @@ export default function App() {
                 <div className="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                   {(currentCategory.people || []).length === 0 ? (
                     <div className="text-center py-8 text-slate-400 text-xs">
-                      কোনো ব্যক্তির নাম যুক্ত করা হয়নি। "নতুন নাম" বাটনে ক্লিক করুন।
+                      কোনো ব্যক্তির নাম যুক্ত করা হয়নি। "নতুন নাম" বাটনে ক্লিক করুন।
                     </div>
                   ) : (
                     currentCategory.people.map((person) => {
@@ -694,7 +671,7 @@ export default function App() {
                 <Search className="w-4 h-4 absolute left-3 top-3 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="বিবরণী, তারিখ বা পরিমাণ দিয়ে খুঁজুন..."
+                  placeholder="বিবরণী, তারিখ বা পরিমাণ দিয়ে খুঁজুন..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -725,7 +702,7 @@ export default function App() {
                   <div className="text-slate-400 text-sm">
                     {currentCategory.type === 'nested' && !currentPerson
                       ? 'অনুগ্রহ করে বামপাশ থেকে একজন ব্যক্তি নির্বাচন করুন।'
-                      : 'কোনো লেনদেনের তথ্য পাওয়া যায়নি।'}
+                      : 'কোনো লেনদেনের তথ্য পাওয়া যায়নি।'}
                   </div>
                 </div>
               ) : (
